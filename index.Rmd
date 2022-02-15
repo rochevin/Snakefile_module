@@ -1,0 +1,129 @@
+---
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: [default,metropolis-fonts,custom.css,bootstrap.min.css]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      beforeInit: "./macros.js"
+---
+
+
+```{r setup, include=FALSE}
+require(knitr)
+require(kableExtra)
+require(tidyverse)
+options(kableExtra.latex.load_packages = FALSE)
+options(knitr.table.format = "html")
+options(htmltools.dir.version = FALSE)
+
+```
+
+
+class: center, middle
+background-image: url(imgs/LOGO-bigA-3101.jpg),url(imgs/cbi.png),url(imgs/logo_UT3_RVB.png)
+background-position: 100% 0%,25% 100%,75% 100%
+background-size: 28%,15%,20%
+
+## .center[__Group Meeting bigA__]
+
+### .center[Studying 3D DNA conformation with __Hi-C__.]
+
+<hr />
+
+.large[Vincent ROCHER | bigA | 03/02/2022]
+
+
+---
+<br>
+<br>
+<br>
+<br>
+<br>
+- https://github.com/snakemake-workflows/snakemake-workflow-template
+- https://github.com/rochevin/RNA-seq-from-SRR-single
+
+---
+
+```bash
+snakedeploy deploy-workflow https://github.com/rochevin/RNA-seq-from-SRR-single \
+  RNA-seq-from-SRR-single --branch "main"
+```
+
+```bash
+Writing Snakefile with module definition...
+Obtaining source repository...
+Cloning into '.'...
+remote: Enumerating objects: 43, done.
+remote: Counting objects: 100% (43/43), done.
+remote: Compressing objects: 100% (35/35), done.
+remote: Total 43 (delta 6), reused 29 (delta 2), pack-reused 0
+Unpacking objects: 100% (43/43), done.
+Writing template configuration...
+Deployment complete, now
+
+  * modify the configuration under RNA-seq-from-SRR-single/config
+  * check and extend the workflow deployment under RNA-seq-from-SRR-single/workflow/Snakefile
+
+according to your needs.
+```
+
+---
+
+```bash
+cat workflow/Snakefile 
+```
+
+```bash
+from snakemake.utils import min_version
+
+
+min_version("6.10.0")
+
+
+configfile: "config/config.yaml"
+
+
+# declare https://github.com/rochevin/RNA-seq-from-SRR-single as a module
+module RNA_seq_from_SRR_single:
+    snakefile: 
+        github("rochevin/RNA-seq-from-SRR-single", path="workflow/Snakefile", branch="main")
+    config:
+        config
+
+
+# use all rules from https://github.com/rochevin/RNA-seq-from-SRR-single
+use rule * from RNA_seq_from_SRR_single
+
+
+```
+
+
+---
+
+```bash
+snakemake -n
+```
+
+```bash
+
+
+Job stats:
+job                        count    min threads    max threads
+-----------------------  -------  -------------  -------------
+all                            1              1              1
+cp_STAR_quant_to_counts        4              1              1
+merge_and_rename_fastq         4              1              1
+sam_to_bam                     4              1              1
+samtools_index_sorted          4              1              1
+samtools_sort                  4              1              1
+sra_getfastq                   8              1              1
+star_aln_quant                 4              1              1
+total                         33              1              1
+
+
+```
